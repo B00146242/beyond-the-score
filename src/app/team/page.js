@@ -3,6 +3,7 @@
 import React from "react";
 import { Grid, Paper, Typography } from "@mui/material";
 import { styled } from "@mui/system";
+import Link from "next/link";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -92,20 +93,30 @@ const ManagerPage = () => {
   return (
     <div style={{ padding: "20px" }}>
       <Grid container spacing={2} justifyContent="center" style={{ marginBottom: "20px" }}>
-        <Grid item xs={2}>
-          <NavItem>Home</NavItem>
+      <Grid item xs={2}>
+          <Link href="/results" passHref>
+            <NavItem>results</NavItem>
+          </Link>
         </Grid>
         <Grid item xs={2}>
-          <NavItem>About</NavItem>
+          <Link href="/manager" passHref>
+            <NavItem>manager</NavItem>
+          </Link>
         </Grid>
         <Grid item xs={2}>
-          <NavItem>Lineup</NavItem>
+          <Link href="/lineup" passHref>
+            <NavItem>Lineup</NavItem>
+          </Link>
         </Grid>
         <Grid item xs={2}>
-          <NavItem>Teams</NavItem>
+          <Link href="/standing" passHref>
+            <NavItem>standing</NavItem>
+          </Link>
         </Grid>
         <Grid item xs={2}>
-          <NavItem>Contact</NavItem>
+          <Link href="/players" passHref>
+            <NavItem>Players</NavItem>
+          </Link>
         </Grid>
       </Grid>
 
@@ -152,14 +163,14 @@ const ManagerPage = () => {
           <Grid container spacing={3} style={{ marginTop: "20px" }}>
             <Grid item xs={6}>
               <PlayerImageContainer>
-                <PlayerImage src="https://via.placeholder.com/100" alt="Player 1" />
+                <PlayerImage src="https://images.app.goo.gl/9kYH2n2QUr74qwKd6" alt="Player 1" />
                 <Typography variant="body1">Player 1</Typography>
                 <Typography variant="body2" style={{ marginTop: "5px" }}>Most Goals: 50</Typography>
               </PlayerImageContainer>
             </Grid>
             <Grid item xs={6}>
               <PlayerImageContainer>
-                <PlayerImage src="https://via.placeholder.com/100" alt="Player 2" />
+                <PlayerImage src="https://images.app.goo.gl/yQKxU77zVsrUiYyr9" alt="Player 2" />
                 <Typography variant="body1">Player 2</Typography>
                 <Typography variant="body2" style={{ marginTop: "5px" }}>Most Assists: 30</Typography>
               </PlayerImageContainer>

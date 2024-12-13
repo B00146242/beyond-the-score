@@ -1,6 +1,4 @@
 export async function GET(req, res) {
-    // Make a note we are on
-    // the api. This goes to the console.
     console.log("in the api page");
   
     const { MongoClient } = require("mongodb");
@@ -11,7 +9,7 @@ export async function GET(req, res) {
     await client.connect();
     console.log("Connected successfully to server");
     const db = client.db(dbName);
-    const collection = db.collection("tests"); // collection name
+    const collection = db.collection("test"); // collection name
     const findResult = await collection.find({}).toArray();
     console.log("Found documents =>", findResult);
   

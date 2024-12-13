@@ -3,6 +3,7 @@
 import React from "react";
 import { Grid, Paper, Typography } from "@mui/material";
 import { styled } from "@mui/system";
+import Link from "next/link";
 
 const NavItem = styled(Paper)(({ theme }) => ({
   textAlign: "center",
@@ -54,20 +55,30 @@ export default function PremierLeagueStandings() {
   return (
     <div style={{ padding: "20px" }}>
       <Grid container spacing={2} justifyContent="center" style={{ marginBottom: "20px" }}>
-        <Grid item xs={2}>
-          <NavItem>Home</NavItem>
+      <Grid item xs={2}>
+          <Link href="/results" passHref>
+            <NavItem>results</NavItem>
+          </Link>
         </Grid>
         <Grid item xs={2}>
-          <NavItem>About</NavItem>
+          <Link href="/manager" passHref>
+            <NavItem>manager</NavItem>
+          </Link>
         </Grid>
         <Grid item xs={2}>
-          <NavItem>Lineup</NavItem>
+          <Link href="/lineup" passHref>
+            <NavItem>Lineup</NavItem>
+          </Link>
         </Grid>
         <Grid item xs={2}>
-          <NavItem>Teams</NavItem>
+          <Link href="/standing" passHref>
+            <NavItem>standing</NavItem>
+          </Link>
         </Grid>
         <Grid item xs={2}>
-          <NavItem>Contact</NavItem>
+          <Link href="/players" passHref>
+            <NavItem>Players</NavItem>
+          </Link>
         </Grid>
       </Grid>
 

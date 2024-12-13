@@ -3,6 +3,7 @@
 import React from "react";
 import { Grid, Paper, Typography } from "@mui/material";
 import { styled } from "@mui/system";
+import Link from "next/link";
 
 const NavItem = styled(Paper)(({ theme }) => ({
   textAlign: "center",
@@ -58,7 +59,7 @@ const ManagerPage = () => {
   const manager = {
     name: "Pep Guardiola",
     club: "Manchester City",
-    image: "https://via.placeholder.com/150", // Example image URL
+    image: "https://images.app.goo.gl/dxJ2hvxRS5btVNUt8", 
     formation: "4-3-3",
     playstyle: "Counter Attacking",
     history: `Pep Guardiola is a Spanish professional football manager and former player, regarded as one of the greatest managers in football history. He is known for his innovative and possession-based style of play. Guardiola's managerial career started at Barcelona, where he won numerous domestic and international titles, including the UEFA Champions League.`,
@@ -69,22 +70,33 @@ const ManagerPage = () => {
   return (
     <div style={{ padding: "20px" }}>
       <Grid container spacing={2} justifyContent="center" style={{ marginBottom: "20px" }}>
-        <Grid item xs={2}>
-          <NavItem>Home</NavItem>
+      <Grid item xs={2}>
+          <Link href="/results" passHref>
+            <NavItem>results</NavItem>
+          </Link>
         </Grid>
         <Grid item xs={2}>
-          <NavItem>About</NavItem>
+          <Link href="/manager" passHref>
+            <NavItem>manager</NavItem>
+          </Link>
         </Grid>
         <Grid item xs={2}>
-          <NavItem>Lineup</NavItem>
+          <Link href="/lineup" passHref>
+            <NavItem>Lineup</NavItem>
+          </Link>
         </Grid>
         <Grid item xs={2}>
-          <NavItem>Teams</NavItem>
+          <Link href="/standing" passHref>
+            <NavItem>standing</NavItem>
+          </Link>
         </Grid>
         <Grid item xs={2}>
-          <NavItem>Contact</NavItem>
+          <Link href="/players" passHref>
+            <NavItem>Players</NavItem>
+          </Link>
         </Grid>
       </Grid>
+
 
       <Typography variant="h4" gutterBottom style={{ textAlign: "center", marginBottom: "20px", fontSize: "32px" }}>
         Manager Profile
@@ -111,7 +123,6 @@ const ManagerPage = () => {
               <Formation>
                 <Typography variant="body1">{manager.formation}</Typography>
                 <FormationDiagram>
-                  {/* 4-3-3 Formation Diagram with 11 players */}
                   <FormationPlayer style={{ gridColumn: "3 / 4", gridRow: "1 / 2" }}>GK</FormationPlayer>
                   <FormationPlayer style={{ gridColumn: "2 / 3", gridRow: "2 / 3" }}>LB</FormationPlayer>
                   <FormationPlayer style={{ gridColumn: "3 / 4", gridRow: "2 / 3" }}>CB</FormationPlayer>

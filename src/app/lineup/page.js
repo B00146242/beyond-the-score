@@ -3,6 +3,7 @@
 import React from 'react';
 import { Grid, Paper, Typography } from '@mui/material';
 import { styled } from '@mui/system';
+import Link from "next/link";
 
 const PlayerItem = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(1),
@@ -30,47 +31,57 @@ const NavItem = styled(Paper)(({ theme }) => ({
 
 export default function LineupPage() {
   const lineup = {
-    goalkeeper: ["Player 1"],
-    defenders: ["Player 2", "Player 3", "Player 4", "Player 5"],
-    midfielders: ["Player 6", "Player 7", "Player 8"],
-    forwards: ["Player 9", "Player 10", "Player 11"],
+    goalkeeper: ["Sanchez"],
+    defenders: ["Chilwell", "Disasi", "tosin", "Cucu"],
+    midfielders: ["lavia", "caicedo", "enzo"],
+    forwards: ["Palmer", "jackson", "neto"],
   };
 
   const opposition = {
-    goalkeeper: ["Opponent 1"],
-    defenders: ["Opponent 2", "Opponent 3", "Opponent 4", "Opponent 5"],
-    midfielders: ["Opponent 6", "Opponent 7", "Opponent 8"],
-    forwards: ["Opponent 9", "Opponent 10", "Opponent 11"],
+    goalkeeper: ["ederson"],
+    defenders: ["walker", "dias", "stones", "ake"],
+    midfielders: ["kovacic", "rodri", "de bryune"],
+    forwards: ["doku", "haaland", "grealish"],
   };
 
   return (
     <div>
       <Grid container spacing={2} justifyContent="center" style={{ marginBottom: '20px' }}>
-        <Grid item xs={2}>
-          <NavItem>Home</NavItem>
+      <Grid item xs={2}>
+          <Link href="/results" passHref>
+            <NavItem>results</NavItem>
+          </Link>
         </Grid>
         <Grid item xs={2}>
-          <NavItem>About</NavItem>
+          <Link href="/manager" passHref>
+            <NavItem>manager</NavItem>
+          </Link>
         </Grid>
         <Grid item xs={2}>
-          <NavItem>Lineup</NavItem>
+          <Link href="/lineup" passHref>
+            <NavItem>Lineup</NavItem>
+          </Link>
         </Grid>
         <Grid item xs={2}>
-          <NavItem>Teams</NavItem>
+          <Link href="/standing" passHref>
+            <NavItem>standing</NavItem>
+          </Link>
         </Grid>
         <Grid item xs={2}>
-          <NavItem>Contact</NavItem>
+          <Link href="/players" passHref>
+            <NavItem>Players</NavItem>
+          </Link>
         </Grid>
       </Grid>
 
       <Typography variant="h4" align="center" gutterBottom>
-        Soccer Formation: 4-3-3
+        Football Formation: 4-3-3
       </Typography>
 
       <Grid container spacing={3} justifyContent="space-between">
         <Grid item xs={5}>
           <Typography variant="h5" align="center" gutterBottom>
-            Your Team
+            Chelsea
           </Typography>
           <FormationContainer container justifyContent="center" alignItems="center">
             <Grid item xs={12} container justifyContent="center">
@@ -113,7 +124,7 @@ export default function LineupPage() {
 
         <Grid item xs={5}>
           <Typography variant="h5" align="center" gutterBottom>
-            Opposition Team
+            Man City
           </Typography>
           <FormationContainer container justifyContent="center" alignItems="center">
             <Grid item xs={12} container justifyContent="center">

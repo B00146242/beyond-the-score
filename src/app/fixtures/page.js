@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Grid, Paper, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import { styled } from "@mui/system";
+import Link from "next/link";
 
-const NavItem = styled(Paper)(({ theme }) => ({
+const NavItem = styled("div")(({ theme }) => ({
   textAlign: "center",
-  padding: theme.spacing(2),
+  padding: "10px",
   color: "grey",
   backgroundColor: "white",
   cursor: "pointer",
@@ -14,61 +15,68 @@ const NavItem = styled(Paper)(({ theme }) => ({
   fontSize: "18px",
   fontWeight: "bold",
   borderRadius: "8px",
+  textDecoration: "none", 
 }));
 
-export default function FixturesPage() {
+export default function Fixtures() {
   const [apiData, setApiData] = useState(null);
 
-  fetch("https://free-api-live-football-data.p.rapidapi.com/football-get-matches-by-date?date=20241107", {
-    "method": "GET",
-    "headers": {
-      "x-rapidapi-host": "free-api-live-football-data.p.rapidapi.com",
-      "x-rapidapi-key": "7090656eebmshf4bf40aab7699dfp185787jsn8cf3b72c856f"
-    }
-  })
-  .then((res) => res.json())
-  .then((data) => {
-    setApiData(data)
-  })
-
-  
-  const fixtures = [
-    { team1: "Chelsea", team2: "Manchester City" },
-    { team1: "Liverpool", team2: "Arsenal" },
-    { team1: "Tottenham", team2: "Manchester United" },
-    { team1: "Leicester City", team2: "Everton" },
-    { team1: "Brighton", team2: "West Ham" },
-    { team1: "Newcastle", team2: "Aston Villa" },
-  ];
+  useEffect(() => {
+    fetch(
+      "https://free-api-live-football-data.p.rapidapi.com/football-get-matches-by-date?date=20241107",
+      {
+        method: "GET",
+        headers: {
+          "x-rapidapi-host": "free-api-live-football-data.p.rapidapi.com",
+          "x-rapidapi-key": "7090656eebmshf4bf40aab7699dfp185787jsn8cf3b72c856f",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => setApiData(data))
+      .catch((err) => console.error(err));
+  }, []);
 
   return (
     <div style={{ padding: "20px" }}>
       <Grid container spacing={2} justifyContent="center" style={{ marginBottom: "20px" }}>
         <Grid item xs={2}>
-          <NavItem>Home</NavItem>
+          <Link href="/results" passHref>
+            <NavItem>results</NavItem>
+          </Link>
         </Grid>
         <Grid item xs={2}>
-          <NavItem>About</NavItem>
+          <Link href="/manager" passHref>
+            <NavItem>manager</NavItem>
+          </Link>
         </Grid>
         <Grid item xs={2}>
-          <NavItem>Lineup</NavItem>
+          <Link href="/lineup" passHref>
+            <NavItem>Lineup</NavItem>
+          </Link>
         </Grid>
         <Grid item xs={2}>
-          <NavItem>Teams</NavItem>
+          <Link href="/standing" passHref>
+            <NavItem>standing</NavItem>
+          </Link>
         </Grid>
         <Grid item xs={2}>
-          <NavItem>Contact</NavItem>
+          <Link href="/players" passHref>
+            <NavItem>Players</NavItem>
+          </Link>
         </Grid>
       </Grid>
 
-      <Typography variant="h4" gutterBottom style={{ textAlign: "center", marginBottom: "20px", fontSize: "32px" }}>
+      <Typography
+        variant="h4"
+        gutterBottom
+        style={{ textAlign: "center", marginBottom: "20px", fontSize: "32px" }}
+      >
         Fixtures
       </Typography>
 
       <Grid container direction="column" spacing={3} justifyContent="center">
-        {JSON.stringify(apiData)}
-
-        
+        <pre>{JSON.stringify(apiData, null, 2)}</pre>
       </Grid>
     </div>
   );
