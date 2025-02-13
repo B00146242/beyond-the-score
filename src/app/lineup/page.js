@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from "react";
 import { Grid, Paper, Typography } from '@mui/material';
 import { styled } from '@mui/system';
 import Link from "next/link";
@@ -30,6 +30,21 @@ const NavItem = styled(Paper)(({ theme }) => ({
 }));
 
 export default function LineupPage() {
+ const [apiData, setApiData] = useState(null);
+
+  useEffect(() => {
+    fetch("https://free-api-live-football-data.p.rapidapi.com/football-get-hometeam-lineup?eventid=4621624", {
+      method: "GET",
+      headers: {
+      'x-rapidapi-key': '7090656eebmshf4bf40aab7699dfp185787jsn8cf3b72c856f',
+		'x-rapidapi-host': 'free-api-live-football-data.p.rapidapi.com'
+      },
+    })
+    .then((res) => res.json())
+    .then((data) => setApiData(data))
+    .catch((err) => console.error(err));
+}, []);
+
   const lineup = {
     goalkeeper: ["Sanchez"],
     defenders: ["Chilwell", "Disasi", "tosin", "Cucu"],
@@ -165,6 +180,9 @@ export default function LineupPage() {
           </FormationContainer>
         </Grid>
       </Grid>
+       <Grid container direction="column" spacing={3} justifyContent="center">
+              <pre>{JSON.stringify(apiData, null, 2)}</pre>
+            </Grid>
     </div>
   );
 }

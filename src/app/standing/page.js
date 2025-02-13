@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Grid, Paper, Typography } from "@mui/material";
 import { styled } from "@mui/system";
 import Link from "next/link";
@@ -29,6 +29,30 @@ const TableItem = styled(Paper)(({ theme }) => ({
 }));
 
 export default function PremierLeagueStandings() {
+ const [apiData, setApiData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(
+      "https://free-api-live-football-data.p.rapidapi.com/football-get-standing-all?leagueid=47",
+      {
+        method: "GET",
+        headers: {
+          'x-rapidapi-key': '7090656eebmshf4bf40aab7699dfp185787jsn8cf3b72c856f',
+		      'x-rapidapi-host': 'free-api-live-football-data.p.rapidapi.com',
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("API Response:", data);
+        setApiData(data);
+      })
+      .catch((err) => console.error("API Fetch Error:", err))
+      .finally(() => setLoading(false));
+  }, []);
+
+
   const standings = [
     { position: 1, team: "Manchester City", pd: 38, gd: 73, pts: 89, w: 28, d: 5, l: 5 },
     { position: 2, team: "Arsenal", pd: 38, gd: 43, pts: 84, w: 26, d: 6, l: 6 },
@@ -115,6 +139,7 @@ export default function PremierLeagueStandings() {
           </Grid>
         ))}
       </Grid>
+       {loading ? <Typography>Loading API data...</Typography> : <pre>{JSON.stringify(apiData, null, 2)}</pre>}
     </div>
   );
 }
