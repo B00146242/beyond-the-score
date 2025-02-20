@@ -33,7 +33,6 @@ export default function Fixtures() {
 
   return (
     <div style={{ padding: "20px" }}>
-      {/* Navigation */}
       <Grid container spacing={2} justifyContent="center" style={{ marginBottom: "20px" }}>
         <Grid item xs={2}><Link href="/results" passHref><NavItem>Results</NavItem></Link></Grid>
         <Grid item xs={2}><Link href="/manager" passHref><NavItem>Manager</NavItem></Link></Grid>
@@ -46,7 +45,6 @@ export default function Fixtures() {
         Fixtures
       </Typography>
 
-      {/* Match Data Display */}
       <Grid container direction="column" spacing={3} justifyContent="center">
         {matches.length > 0 ? (
           matches.map((match, index) => (
