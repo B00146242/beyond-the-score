@@ -5,7 +5,7 @@ import { Grid, Typography } from "@mui/material";
 import { styled } from "@mui/system";
 import Link from "next/link";
 
-const NavItem = styled("div")(({ theme }) => ({
+const NavItem = styled("div")({
   textAlign: "center",
   padding: "10px",
   color: "grey",
@@ -16,52 +16,29 @@ const NavItem = styled("div")(({ theme }) => ({
   fontWeight: "bold",
   borderRadius: "8px",
   textDecoration: "none",
-}));
+});
 
 export default function Fixtures() {
-  const [apiData, setApiData] = useState(null);
-  const [processedData, setProcessedData] = useState([]);
+  const [matches, setMatches] = useState([]);
 
   useEffect(() => {
-    fetch("https://free-api-live-football-data.p.rapidapi.com/football-get-matches-by-date?date=20241107", {
-      method: "GET",
-      headers: {
-        "x-rapidapi-host": "free-api-live-football-data.p.rapidapi.com",
-        "x-rapidapi-key": "7090656eebmshf4bf40aab7699dfp185787jsn8cf3b72c856f",
-      }
-    })
+    fetch("/api/fixture") 
       .then((res) => res.json())
       .then((data) => {
-        console.log("API Response:", data);
-
-        if (data.response && Array.isArray(data.response.matches) && data.response.matches.length > 0) {
-          const extractedData = data.response.matches.map((match) => ({
-            matchId: match.id || "N/A",
-            homeTeam: match.home?.name || "Unknown",
-            awayTeam: match.away?.name || "Unknown",
-            homeScore: match.home?.score ?? "N/A",
-            awayScore: match.away?.score ?? "N/A",
-            status: match.status?.long || "Unknown",
-            dateTime: match.time || "Unknown",
-          }));
-          setProcessedData(extractedData);
-        } else {
-          console.warn("No matches found in the response");
-          setProcessedData([]);
-        }
+        console.log("MongoDB Response:", data);
+        setMatches(data);
       })
-      .catch((err) => {
-        console.error("API Fetch Error:", err);
-      });
+      .catch((err) => console.error("Fetch Error:", err));
   }, []);
 
   return (
     <div style={{ padding: "20px" }}>
+      {/* Navigation */}
       <Grid container spacing={2} justifyContent="center" style={{ marginBottom: "20px" }}>
-        <Grid item xs={2}><Link href="/results" passHref><NavItem>results</NavItem></Link></Grid>
-        <Grid item xs={2}><Link href="/manager" passHref><NavItem>manager</NavItem></Link></Grid>
+        <Grid item xs={2}><Link href="/results" passHref><NavItem>Results</NavItem></Link></Grid>
+        <Grid item xs={2}><Link href="/manager" passHref><NavItem>Manager</NavItem></Link></Grid>
         <Grid item xs={2}><Link href="/lineup" passHref><NavItem>Lineup</NavItem></Link></Grid>
-        <Grid item xs={2}><Link href="/standing" passHref><NavItem>standing</NavItem></Link></Grid>
+        <Grid item xs={2}><Link href="/standing" passHref><NavItem>Standing</NavItem></Link></Grid>
         <Grid item xs={2}><Link href="/players" passHref><NavItem>Players</NavItem></Link></Grid>
       </Grid>
 
@@ -69,14 +46,13 @@ export default function Fixtures() {
         Fixtures
       </Typography>
 
+      {/* Match Data Display */}
       <Grid container direction="column" spacing={3} justifyContent="center">
-        {processedData.length > 0 ? (
-          processedData.map((match) => (
-            <div key={match.matchId} style={{ padding: "10px", borderBottom: "1px solid #ccc" }}>
-              <Typography variant="h6">{match.homeTeam} vs {match.awayTeam}</Typography>
-              <Typography>Score: {match.homeScore} - {match.awayScore}</Typography>
-              <Typography>Status: {match.status}</Typography>
-              <Typography>Date & Time: {match.dateTime}</Typography>
+        {matches.length > 0 ? (
+          matches.map((match, index) => (
+            <div key={index} style={{ padding: "10px", borderBottom: "1px solid #ccc" }}>
+              <Typography variant="h6">{match.hometeam} vs {match.awayteam}</Typography>
+              <Typography>Score: {match.homescore} - {match.awayscore}</Typography>
             </div>
           ))
         ) : (

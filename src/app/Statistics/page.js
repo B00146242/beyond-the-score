@@ -1,3 +1,4 @@
+//Footapi you cna sue it but has very limited stuff and it's old data
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -22,11 +23,11 @@ export default function Fixtures() {
   const [apiData, setApiData] = useState(null);
 
   useEffect(() => {
-    fetch("https://footapi7.p.rapidapi.com/api/player/3041/statistics/season", {
+    fetch("https://footapi7.p.rapidapi.com/api/player/3041/tournament/7/season/36886/statistics", {
       method: "GET",
       headers: {
         'x-rapidapi-key': '65a84db33cmshf211b6817ea17d8p191775jsn3b3820a40528',
-        'x-rapidapi-host': 'footapi7.p.rapidapi.com'
+		'x-rapidapi-host': 'footapi7.p.rapidapi.com'
       }
     })
       .then((res) => res.json())
