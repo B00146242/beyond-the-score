@@ -34,12 +34,12 @@ export default function PremierLeagueStandings() {
 
   useEffect(() => {
     fetch(
-      "https://free-api-live-football-data.p.rapidapi.com/football-get-standing-all?leagueid=47",
+      "https://api-football-v1.p.rapidapi.com/v3/teams/statistics?league=39&season=2024&team=33",
       {
         method: "GET",
         headers: {
-          'x-rapidapi-key': '7090656eebmshf4bf40aab7699dfp185787jsn8cf3b72c856f',
-		      'x-rapidapi-host': 'free-api-live-football-data.p.rapidapi.com',
+          'x-rapidapi-key': '65a84db33cmshf211b6817ea17d8p191775jsn3b3820a40528',
+		'x-rapidapi-host': 'api-football-v1.p.rapidapi.com'
         },
       }
     )

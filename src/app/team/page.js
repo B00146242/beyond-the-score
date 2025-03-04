@@ -7,83 +7,77 @@ import Link from "next/link";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 
-ChartJS.register(ArcElement, Tooltip, Legend);
-
-const NavItem = styled(Paper)(({ theme }) => ({
-  textAlign: "center",
-  padding: theme.spacing(2),
-  color: "grey",
-  backgroundColor: "white",
-  cursor: "pointer",
-  boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
-  fontSize: "18px",
-  fontWeight: "bold",
-  borderRadius: "8px",
-}));
-
-const FormationDiagram = styled("div")({
-  display: "grid",
-  gridTemplateColumns: "repeat(5, 1fr)",
-  gridTemplateRows: "repeat(3, 1fr)",
-  gridGap: "10px",
-  marginTop: "20px",
-});
-
-const FormationPlayer = styled("div")({
-  width: "60px",
-  height: "60px",
-  borderRadius: "50%",
-  backgroundColor: "#3498db",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  color: "white",
-  fontSize: "14px",
-});
-
-const PieChartContainer = styled(Paper)({
-  padding: "20px",
-  textAlign: "center",
-  boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
-  margin: "10px",
-  borderRadius: "8px",
-});
-
-const PlayerImageContainer = styled("div")({
-  textAlign: "center",
-  marginTop: "10px",
-});
-
-const PlayerImage = styled("img")({
-  width: "100px",
-  height: "100px",
-  borderRadius: "50%",
-  marginBottom: "10px",
-});
-
-export default function ManagerPage() {
-  const [apiData, setApiData] = useState(null);
+export default function Statistics() {
+  const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(
-      "https://free-api-live-football-data.p.rapidapi.com/football-get-match-all-stats?eventid=4621624",
-      {
-        method: "GET",
-        headers: {
-          "x-rapidapi-key": "7090656eebmshf4bf40aab7699dfp185787jsn8cf3b72c856f",
-          "x-rapidapi-host": "free-api-live-football-data.p.rapidapi.com",
-        },
-      }
-    )
+    fetch("/api/stats")
       .then((res) => res.json())
       .then((data) => {
-        console.log("API Response:", data);
-        setApiData(data);
+        console.log("MongoDB Response:", data);
+        setStats(data);
+        setLoading(false);
       })
-      .catch((err) => console.error("API Fetch Error:", err))
-      .finally(() => setLoading(false));
+      .catch((err) => {
+        console.error("Fetch Error:", err);
+        setLoading(false);
+      });
   }, []);
+
+  ChartJS.register(ArcElement, Tooltip, Legend);
+
+  const NavItem = styled(Paper)(({ theme }) => ({
+    textAlign: "center",
+    padding: theme.spacing(2),
+    color: "grey",
+    backgroundColor: "white",
+    cursor: "pointer",
+    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+    fontSize: "18px",
+    fontWeight: "bold",
+    borderRadius: "8px",
+  }));
+
+  const FormationDiagram = styled("div")({
+    display: "grid",
+    gridTemplateColumns: "repeat(5, 1fr)",
+    gridTemplateRows: "repeat(3, 1fr)",
+    gridGap: "10px",
+    marginTop: "20px",
+  });
+
+  const FormationPlayer = styled("div")({
+    width: "60px",
+    height: "60px",
+    borderRadius: "50%",
+    backgroundColor: "#3498db",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    color: "white",
+    fontSize: "14px",
+  });
+
+  const PieChartContainer = styled(Paper)({
+    padding: "20px",
+    textAlign: "center",
+    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+    margin: "10px",
+    borderRadius: "8px",
+  });
+
+  const PlayerImageContainer = styled("div")({
+    textAlign: "center",
+    marginTop: "10px",
+  });
+
+  const PlayerImage = styled("img")({
+    width: "100px",
+    height: "100px",
+    borderRadius: "50%",
+    marginBottom: "10px",
+  });
 
   const manager = {
     name: "Pep Guardiola",
@@ -186,7 +180,20 @@ export default function ManagerPage() {
         </Grid>
       </Grid>
 
-      {loading ? <Typography>Loading API data...</Typography> : <pre>{JSON.stringify(apiData, null, 2)}</pre>}
+      {/* API Data Display */}
+      {loading ? (
+        <Typography variant="h6" style={{ textAlign: "center" }}>Loading...</Typography>
+      ) : stats ? (
+        <Paper style={{ padding: "20px", textAlign: "center", margin: "20px", borderRadius: "8px" }}>
+          <Typography variant="h6">API Data:</Typography>
+          <pre style={{ textAlign: "left", whiteSpace: "pre-wrap" }}>
+            {JSON.stringify(stats, null, 2)}
+          </pre>
+        </Paper>
+      ) : (
+        <Typography variant="h6" style={{ textAlign: "center", color: "red" }}>Failed to load statistics.</Typography>
+      )}
+
     </div>
   );
 }
