@@ -1,11 +1,30 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import * as d3 from "d3";
 import { Grid, Paper, Typography } from "@mui/material";
 import { styled } from "@mui/system";
-import Link from "next/link";
-import { Pie } from "react-chartjs-2";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+
+const NavItem = styled(Paper)(({ theme }) => ({
+  textAlign: "center",
+  padding: theme.spacing(2),
+  color: "grey",
+  backgroundColor: "white",
+  cursor: "pointer",
+  boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+  fontSize: "14px", 
+  fontWeight: "bold",
+  borderRadius: "8px",
+}));
+
+const chartStats = [
+  { key: "goals.for.total.total", label: "Goals For", color: "#3498db" },
+  { key: "goals.against.total.total", label: "Goals Against", color: "#e74c3c" },
+  { key: "clean_sheet.total", label: "Clean Sheets", color: "#2ecc71" },
+  { key: "assists.total", label: "Assists", color: "#9b59b6" },
+  { key: "penalty.scored.total", label: "Penalties Scored", color: "#f1c40f" },
+  { key: "wins.total", label: "Wins", color: "#1abc9c" },
+];
 
 export default function Statistics() {
   const [stats, setStats] = useState(null);
@@ -15,7 +34,6 @@ export default function Statistics() {
     fetch("/api/stats")
       .then((res) => res.json())
       .then((data) => {
-        console.log("MongoDB Response:", data);
         setStats(data);
         setLoading(false);
       })
@@ -25,175 +43,97 @@ export default function Statistics() {
       });
   }, []);
 
-  ChartJS.register(ArcElement, Tooltip, Legend);
+  const drawChart = (statKey, label, color, containerId) => {
+    if (!stats) return;
 
-  const NavItem = styled(Paper)(({ theme }) => ({
-    textAlign: "center",
-    padding: theme.spacing(2),
-    color: "grey",
-    backgroundColor: "white",
-    cursor: "pointer",
-    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
-    fontSize: "18px",
-    fontWeight: "bold",
-    borderRadius: "8px",
-  }));
+    const width = 200;
+    const height = width;
+    const innerRadius = 40; 
+    const outerRadius = Math.min(width, height) / 2.5; 
 
-  const FormationDiagram = styled("div")({
-    display: "grid",
-    gridTemplateColumns: "repeat(5, 1fr)",
-    gridTemplateRows: "repeat(3, 1fr)",
-    gridGap: "10px",
-    marginTop: "20px",
-  });
+    const data = stats.map((item) => ({
+      state: item.team_statistics.team.name,
+      population: statKey.split(".").reduce((acc, part) => acc?.[part], item.team_statistics) || 0,
+    }));
 
-  const FormationPlayer = styled("div")({
-    width: "60px",
-    height: "60px",
-    borderRadius: "50%",
-    backgroundColor: "#3498db",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    color: "white",
-    fontSize: "14px",
-  });
+    const svg = d3
+      .select(`#${containerId}`)
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height)
+      .attr("viewBox", [-width / 2, -height / 2, width, height])
+      .attr("style", "width: 100%; height: auto; font: 5px sans-serif;"); 
 
-  const PieChartContainer = styled(Paper)({
-    padding: "20px",
-    textAlign: "center",
-    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
-    margin: "10px",
-    borderRadius: "8px",
-  });
+    const x = d3
+      .scaleBand()
+      .domain(data.map((d) => d.state))
+      .range([0, 2 * Math.PI])
+      .align(0);
 
-  const PlayerImageContainer = styled("div")({
-    textAlign: "center",
-    marginTop: "10px",
-  });
+    const y = d3
+      .scaleRadial()
+      .domain([0, d3.max(data, (d) => d.population)])
+      .range([innerRadius, outerRadius]);
 
-  const PlayerImage = styled("img")({
-    width: "100px",
-    height: "100px",
-    borderRadius: "50%",
-    marginBottom: "10px",
-  });
+    const arc = d3
+      .arc()
+      .innerRadius(innerRadius)
+      .outerRadius((d) => y(d.population))
+      .startAngle((d) => x(d.state))
+      .endAngle((d) => x(d.state) + x.bandwidth())
+      .padAngle(0.01)
+      .padRadius(innerRadius);
 
-  const manager = {
-    name: "Pep Guardiola",
-    club: "Manchester City",
-    formation: "4-3-3",
-    playstyle: "Counter Attacking",
-    leaguePosition: "1st in Premier League",
-    accomplishments: `Guardiola has won multiple Premier League titles with Manchester City, as well as two Champions League titles with Barcelona.`,
+    svg
+      .append("g")
+      .selectAll("path")
+      .data(data)
+      .join("path")
+      .attr("fill", color)
+      .attr("d", arc)
+      .append("title")
+      .text((d) => `${d.state}: ${d.population}`);
+
+    svg
+      .append("g")
+      .selectAll("text")
+      .data(data)
+      .join("text")
+      .attr("text-anchor", "middle")
+      .attr("transform", (d) => `
+        rotate(${((x(d.state) + x.bandwidth() / 2) * 180) / Math.PI - 90})
+        translate(${innerRadius - 10},0)
+      `)
+      .text((d) => `${d.state}: ${d.population}`);
+
+    svg
+      .append("text")
+      .attr("x", 0)
+      .attr("y", outerRadius + 20)
+      .attr("text-anchor", "middle")
+      .text(label);
   };
 
-  const pieData1 = {
-    labels: ["Possession", "Shots", "Passes", "Tackles"],
-    datasets: [
-      {
-        data: [40, 25, 20, 15],
-        backgroundColor: ["#3498db", "#e74c3c", "#f39c12", "#2ecc71"],
-      },
-    ],
-  };
-
-  const pieData2 = {
-    labels: ["Goals", "Assists", "Clean Sheets", "Yellow Cards"],
-    datasets: [
-      {
-        data: [50, 25, 10, 15],
-        backgroundColor: ["#e74c3c", "#3498db", "#2ecc71", "#f39c12"],
-      },
-    ],
-  };
+  useEffect(() => {
+    if (!loading && stats) {
+      chartStats.forEach((stat, index) => {
+        drawChart(stat.key, stat.label, stat.color, `chart-${index}`);
+      });
+    }
+  }, [stats]);
 
   return (
     <div style={{ padding: "20px" }}>
       <Grid container spacing={2} justifyContent="center" style={{ marginBottom: "20px" }}>
-        <Grid item xs={2}>
-          <Link href="/results" passHref>
-            <NavItem>results</NavItem>
-          </Link>
-        </Grid>
-        <Grid item xs={2}>
-          <Link href="/manager" passHref>
-            <NavItem>manager</NavItem>
-          </Link>
-        </Grid>
-        <Grid item xs={2}>
-          <Link href="/lineup" passHref>
-            <NavItem>Lineup</NavItem>
-          </Link>
-        </Grid>
-        <Grid item xs={2}>
-          <Link href="/standing" passHref>
-            <NavItem>standing</NavItem>
-          </Link>
-        </Grid>
-        <Grid item xs={2}>
-          <Link href="/players" passHref>
-            <NavItem>Players</NavItem>
-          </Link>
-        </Grid>
+        {chartStats.map((_, index) => (
+          <Grid item xs={4} key={index} id={`chart-${index}`}></Grid>
+        ))}
       </Grid>
-
-      <Typography variant="h4" gutterBottom style={{ textAlign: "center", marginBottom: "20px", fontSize: "32px" }}>
-        Manager Profile
-      </Typography>
-
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={4}>
-          <Typography variant="h6" gutterBottom>
-            Formation Diagram: {manager.formation}
-          </Typography>
-          <FormationDiagram>
-            <FormationPlayer style={{ gridColumn: "3 / 4", gridRow: "1 / 2" }}>GK</FormationPlayer>
-            <FormationPlayer style={{ gridColumn: "2 / 3", gridRow: "2 / 3" }}>LB</FormationPlayer>
-            <FormationPlayer style={{ gridColumn: "3 / 4", gridRow: "2 / 3" }}>CB</FormationPlayer>
-            <FormationPlayer style={{ gridColumn: "4 / 5", gridRow: "2 / 3" }}>CB</FormationPlayer>
-            <FormationPlayer style={{ gridColumn: "5 / 6", gridRow: "2 / 3" }}>RB</FormationPlayer>
-            <FormationPlayer style={{ gridColumn: "2 / 3", gridRow: "3 / 4" }}>CM</FormationPlayer>
-            <FormationPlayer style={{ gridColumn: "3 / 4", gridRow: "3 / 4" }}>CM</FormationPlayer>
-            <FormationPlayer style={{ gridColumn: "4 / 5", gridRow: "3 / 4" }}>CM</FormationPlayer>
-            <FormationPlayer style={{ gridColumn: "2 / 3", gridRow: "4 / 5" }}>RW</FormationPlayer>
-            <FormationPlayer style={{ gridColumn: "3 / 4", gridRow: "4 / 5" }}>CF</FormationPlayer>
-            <FormationPlayer style={{ gridColumn: "4 / 5", gridRow: "4 / 5" }}>LW</FormationPlayer>
-          </FormationDiagram>
-        </Grid>
-
-        <Grid item xs={12} md={8}>
-          <Grid container spacing={3}>
-            <Grid item xs={6}>
-              <PieChartContainer>
-                <Pie data={pieData1} options={{ responsive: true, plugins: { legend: { display: false } } }} />
-                <Typography variant="body1" style={{ marginTop: "10px" }}>Player Stats</Typography>
-              </PieChartContainer>
-            </Grid>
-            <Grid item xs={6}>
-              <PieChartContainer>
-                <Pie data={pieData2} options={{ responsive: true, plugins: { legend: { display: false } } }} />
-                <Typography variant="body1" style={{ marginTop: "10px" }}>Performance Stats</Typography>
-              </PieChartContainer>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
-
-      {/* API Data Display */}
-      {loading ? (
-        <Typography variant="h6" style={{ textAlign: "center" }}>Loading...</Typography>
-      ) : stats ? (
-        <Paper style={{ padding: "20px", textAlign: "center", margin: "20px", borderRadius: "8px" }}>
-          <Typography variant="h6">API Data:</Typography>
-          <pre style={{ textAlign: "left", whiteSpace: "pre-wrap" }}>
-            {JSON.stringify(stats, null, 2)}
-          </pre>
-        </Paper>
-      ) : (
-        <Typography variant="h6" style={{ textAlign: "center", color: "red" }}>Failed to load statistics.</Typography>
+      {loading && (
+        <Typography variant="h6" style={{ textAlign: "center" }}>
+          Loading...
+        </Typography>
       )}
-
     </div>
   );
 }
